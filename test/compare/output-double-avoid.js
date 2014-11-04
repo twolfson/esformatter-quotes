@@ -14,10 +14,10 @@ var avoidDouble = "double 'quote'";
 
 // escaping ====
 
-var lorem = "ipsum \"dolor\" sit 'amet'";
-var maecennas = "ipsum 'dolor' sit \"amet\"";
+var lorem = "ipsum \"dolor\" sit ''amet'";
+var maecennas = "ipsum 'dolor' sit \"\"amet\"";
 
-var unnecessaryEscape = "bar 'baz' \"dolor\"";
+var unnecessaryEscape = "bar 'baz' \"\"dolor\"";
 
 
 // multiline strings ====
