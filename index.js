@@ -32,6 +32,7 @@ exports.tokenBefore = function(token) {
     var quote = quoteValue;
     var alternate = alternateQuote;
 
+
     var shouldAvoidEscape = avoidEscape &&
       content.indexOf(quote) >= 0 &&
       content.indexOf(alternate) < 0;
@@ -45,7 +46,8 @@ exports.tokenBefore = function(token) {
     var alternateEscape = new RegExp('\\\\' + alternate, 'g');
     content = content.replace(alternateEscape, alternate);
 
-    var quoteEscape = new RegExp('([^\\\\])' + quote, 'g');
+    var quoteEscape = new RegExp('(^|[^\\\\])' + quote, 'g');
+    console.log(content);
     content = content.replace(quoteEscape, '$1\\' + quote);
 
     token.value = quote + content + quote;
