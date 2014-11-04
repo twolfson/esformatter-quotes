@@ -20,9 +20,6 @@ var maecennas = 'ipsum \'dolor\' sit "amet"';
 var unnecessaryEscape = 'bar \'baz\' \"dolor\"';
 
 var singleQuoteChar = "'";
-var doubleQuoteChar = '"';
-var escapedSingleQuoteChar = '\'';
-var escapedDoubleQuoteChar = "\"";
 
 
 // multiline strings ====
