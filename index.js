@@ -45,11 +45,12 @@ exports.tokenBefore = function(token) {
     var alternateEscape = new RegExp('\\\\' + alternate, 'g');
     content = content.replace(alternateEscape, alternate);
 
+    // If we are an unescaped set of quotes, escape them (e.g. "hello'" -> 'hello\'', "hello''" -> 'hello\'\'')
+    // DEV: JavaScript starts the next match at the end of the current one, causing us to need a function or loop.
     var quoteEscape = new RegExp('([^\\\\])(' + quote + '+)', 'g');
     content = content.replace(quoteEscape, function replaceQuotes (input, group1, group2, match) {
       return group1 + new Array(group2.length + 1).join('\\' + quote);
     });
-    console.log(content);
 
     token.value = quote + content + quote;
   }
