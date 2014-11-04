@@ -45,8 +45,11 @@ exports.tokenBefore = function(token) {
     var alternateEscape = new RegExp('\\\\' + alternate, 'g');
     content = content.replace(alternateEscape, alternate);
 
-    var quoteEscape = new RegExp('([^\\\\])' + quote, 'g');
-    content = content.replace(quoteEscape, '$1\\' + quote);
+    var quoteEscape = new RegExp('([^\\\\])(' + quote + '+)', 'g');
+    content = content.replace(quoteEscape, function replaceQuotes (input, group1, group2, match) {
+      return group1 + new Array(group2.length + 1).join('\\' + quote);
+    });
+    console.log(content);
 
     token.value = quote + content + quote;
   }
