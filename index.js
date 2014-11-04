@@ -32,7 +32,6 @@ exports.tokenBefore = function(token) {
     var quote = quoteValue;
     var alternate = alternateQuote;
 
-
     var shouldAvoidEscape = avoidEscape &&
       content.indexOf(quote) >= 0 &&
       content.indexOf(alternate) < 0;
