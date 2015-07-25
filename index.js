@@ -43,7 +43,9 @@ exports.tokenBefore = function(token) {
     }
 
     // we always normalize the behavior to remove unnecessary escapes
-    var alternateEscape = new RegExp('(^|[^\\\\])(\\\\\\\\\)*(\\\\' + alternate + ')', 'g');
+    // If the escaped quote should be unescaped, then escape it (e.g. '\"' -> '"')
+    //   However, don't remove escapes from slashes (e.g. '\\"' -> '\\"')
+    var alternateEscape = new RegExp('(^|[^\\\\])(\\\\\\\\\)*\\\\(' + alternate + ')', 'g');
     content = content.replace(alternateEscape, function replaceQuotes (input, group1, leadingEscapedSlashes, group2, match) {
       return group1 + (leadingEscapedSlashes || '') + new Array(group2.length + 1).join(alternate);
     });

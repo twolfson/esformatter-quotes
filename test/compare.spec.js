@@ -18,7 +18,7 @@ describe('compare input/output', function() {
   });
 
   describe('single quote', function() {
-    it.only('should convert to single quotes and normalize escapes', function() {
+    it('should convert to single quotes and normalize escapes', function() {
       var output = esformatter.format(input, {
         quotes: {
           type: 'single'
