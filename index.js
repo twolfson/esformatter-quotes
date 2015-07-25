@@ -51,23 +51,21 @@ exports.tokenBefore = function(token) {
     //   - We want to prevent replacing escaped slashes (i.e. `\\` should not be replaced, this is 8 slashes in RegExp)
     //   - We want to replace `\"` with `"` as the slash is unnecessary
     //      so consume `\` but don't match it and preserve the quote
+    ///  - We match as many pairs as possible for `\"` due to requiring a leading word boundary on our next match (which won't exist)
     var alternateEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)((\\\\' + alternate + ')+)', 'g');
     content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, escapedQuoteChars, escapedQuoteChar, match) {
+      // DEV: We divide the escapedQuoteChars by 2 since there are 2 characters in each escaped part ('\\"'.length === 2)
       return boundaryChar + leadingEscapedSlashes + new Array((escapedQuoteChars.length / 2) + 1).join(alternate);
     });
-    console.log(content);
 
     // If the first character is a quote, escape it (e.g. "'hello" -> '\'hello')
     //   or if a character is an unescaped quote, escape it (e.g. "hello'" -> 'hello\'')
     // If we are an unescaped set of quotes, escape them (e.g. "hello'" -> 'hello\'', "hello''" -> 'hello\'\'')
     // DEV: JavaScript starts the next match at the end of the current one, causing us to need a function or loop.
     var quoteEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)(' + quote + '+)', 'g');
-    console.log(quoteEscape);
     content = content.replace(quoteEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, quoteChars, match) {
-      console.log(leadingEscapedSlashes);
       return boundaryChar + leadingEscapedSlashes + new Array(quoteChars.length + 1).join('\\' + quote);
     });
-    console.log(content);
     token.value = quote + content + quote;
   }
 };
