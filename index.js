@@ -51,13 +51,9 @@ exports.tokenBefore = function(token) {
     //   - We want to prevent replacing escaped slashes (i.e. `\\` should not be replaced, this is 8 slashes in RegExp)
     //   - We want to replace `\"` with `"` as the slash is unnecessary
     //      so consume `\` but don't match it and preserve the quote
-    var alternateEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)\\\\(' + alternate + ')', 'g');
-    console.log(alternateEscape);
-    console.log(" '' \"\"".match(/(.)((\\{2})*)\\(')/));
-    console.log(content);
-    content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, quoteChar, match) {
-      console.log('slaaaash', leadingEscapedSlashes);
-      return boundaryChar + leadingEscapedSlashes + alternate;
+    var alternateEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)((\\\\' + alternate + ')+)', 'g');
+    content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, escapedQuoteChars, escapedQuoteChar, match) {
+      return boundaryChar + leadingEscapedSlashes + new Array((escapedQuoteChars.length / 2) + 1).join(alternate);
     });
     console.log(content);
 
