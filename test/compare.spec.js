@@ -39,7 +39,7 @@ describe('compare input/output', function() {
   });
 
   describe('double quote', function() {
-    it('should convert to double quotes and normalize escapes', function() {
+    it.only('should convert to double quotes and normalize escapes', function() {
       var output = esformatter.format(input, {
         quotes: {
           type: 'double'

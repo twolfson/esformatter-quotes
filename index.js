@@ -45,7 +45,7 @@ exports.tokenBefore = function(token) {
     // we always normalize the behavior to remove unnecessary escapes
     // If the escaped quote should be unescaped, then escape it (e.g. '\"' -> '"')
     //   However, don't remove escapes from slashes (e.g. '\\"' -> '\\"')
-    var alternateEscape = new RegExp('(^|[^\\\\])(\\\\\\\\\)*\\\\(' + alternate + ')', 'g');
+    var alternateEscape = new RegExp('(^|[^\\\\])(\\\\\\\\)*\\\\(' + alternate + ')', 'g');
     content = content.replace(alternateEscape, function replaceQuotes (input, group1, leadingEscapedSlashes, group2, match) {
       return group1 + (leadingEscapedSlashes || '') + new Array(group2.length + 1).join(alternate);
     });
@@ -54,7 +54,7 @@ exports.tokenBefore = function(token) {
     //   or if a character is an unescaped quote, escape it (e.g. "hello'" -> 'hello\'')
     // If we are an unescaped set of quotes, escape them (e.g. "hello'" -> 'hello\'', "hello''" -> 'hello\'\'')
     // DEV: JavaScript starts the next match at the end of the current one, causing us to need a function or loop.
-    var quoteEscape = new RegExp('(^|[^\\\\])(\\\\\\\\\)*(' + quote + '+)', 'g');
+    var quoteEscape = new RegExp('(^|[^\\\\])(\\\\\\\\)*(' + quote + '+)', 'g');
     content = content.replace(quoteEscape, function replaceQuotes (input, group1, leadingEscapedSlashes, group2, match) {
       return group1 + (leadingEscapedSlashes || '') + new Array(group2.length + 1).join('\\' + quote);
     });
