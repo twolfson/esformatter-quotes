@@ -45,20 +45,33 @@ exports.tokenBefore = function(token) {
     // we always normalize the behavior to remove unnecessary escapes
     // If the escaped quote should be unescaped, then escape it (e.g. '\"' -> '"')
     //   However, don't remove escapes from slashes (e.g. '\\"' -> '\\"')
-    var alternateEscape = new RegExp('(^|[^\\\\])(\\\\{2})*\\\\(' + alternate + ')', 'g');
-    content = content.replace(alternateEscape, function replaceQuotes (input, group1, leadingEscapedSlashes, group2, match) {
-      return group1 + (leadingEscapedSlashes || '') + new Array(group2.length + 1).join(alternate);
+    // DEV: RegExp explained:
+    //   - We want to start on a non-slash character to only match at boundaries
+    //      (i.e. `^|\`, the 4 slashes are 1 slash in RegExp)
+    //   - We want to prevent replacing escaped slashes (i.e. `\\` should not be replaced, this is 8 slashes in RegExp)
+    //   - We want to replace `\"` with `"` as the slash is unnecessary
+    //      so consume `\` but don't match it and preserve the quote
+    var alternateEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)\\\\(' + alternate + ')', 'g');
+    console.log(alternateEscape);
+    console.log(" '' \"\"".match(/(.)((\\{2})*)\\(')/));
+    console.log(content);
+    content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, quoteChar, match) {
+      console.log('slaaaash', leadingEscapedSlashes);
+      return boundaryChar + leadingEscapedSlashes + alternate;
     });
+    console.log(content);
 
     // If the first character is a quote, escape it (e.g. "'hello" -> '\'hello')
     //   or if a character is an unescaped quote, escape it (e.g. "hello'" -> 'hello\'')
     // If we are an unescaped set of quotes, escape them (e.g. "hello'" -> 'hello\'', "hello''" -> 'hello\'\'')
     // DEV: JavaScript starts the next match at the end of the current one, causing us to need a function or loop.
-    var quoteEscape = new RegExp('(^|[^\\\\])(\\\\{2})*(' + quote + '+)', 'g');
-    content = content.replace(quoteEscape, function replaceQuotes (input, group1, leadingEscapedSlashes, group2, match) {
-      return group1 + (leadingEscapedSlashes || '') + new Array(group2.length + 1).join('\\' + quote);
+    var quoteEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)(' + quote + '+)', 'g');
+    console.log(quoteEscape);
+    content = content.replace(quoteEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, quoteChars, match) {
+      console.log(leadingEscapedSlashes);
+      return boundaryChar + leadingEscapedSlashes + new Array(quoteChars.length + 1).join('\\' + quote);
     });
-
+    console.log(content);
     token.value = quote + content + quote;
   }
 };
