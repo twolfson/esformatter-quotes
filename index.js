@@ -9,6 +9,11 @@ var disabled;
 var quoteValue;
 var alternateQuote;
 
+// Helper to generate a string that repeats itself n times
+//   e.g. ("ab", 2) -> "abab"
+function repeat(str, n) {
+  return new Array(n + 1).join(str);
+}
 
 exports.setOptions = function(opts) {
   opts = opts && opts.quotes;
@@ -50,21 +55,20 @@ exports.tokenBefore = function(token) {
     //      (i.e. `^|\`, the 4 slashes are 1 slash in RegExp)
     //   - We want to prevent replacing escaped slashes (i.e. `\\` should not be replaced, this is 8 slashes in RegExp)
     //   - We want to replace `\"` with `"` as the slash is unnecessary
-    //      so consume `\` but don't match it and preserve the quote
     ///  - We match as many pairs as possible for `\"` due to requiring a leading word boundary on our next match (which won't exist)
-    var alternateEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)((\\\\' + alternate + ')+)', 'g');
-    content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, escapedQuoteChars, escapedQuoteChar, match) {
+    var alternateEscape = new RegExp('(^|[^\\\\])((?:\\\\{2})*)((?:\\\\' + alternate + ')+)', 'g');
+    content = content.replace(alternateEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, escapedQuoteChars, match) {
       // DEV: We divide the escapedQuoteChars by 2 since there are 2 characters in each escaped part ('\\"'.length === 2)
-      return boundaryChar + leadingEscapedSlashes + new Array((escapedQuoteChars.length / 2) + 1).join(alternate);
+      return boundaryChar + leadingEscapedSlashes + repeat(alternate, escapedQuoteChars.length / 2);
     });
 
     // If the first character is a quote, escape it (e.g. "'hello" -> '\'hello')
     //   or if a character is an unescaped quote, escape it (e.g. "hello'" -> 'hello\'')
     // If we are an unescaped set of quotes, escape them (e.g. "hello'" -> 'hello\'', "hello''" -> 'hello\'\'')
     // DEV: JavaScript starts the next match at the end of the current one, causing us to need a function or loop.
-    var quoteEscape = new RegExp('(^|[^\\\\])((\\\\{2})*)(' + quote + '+)', 'g');
-    content = content.replace(quoteEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, leadingEscapedSlash, quoteChars, match) {
-      return boundaryChar + leadingEscapedSlashes + new Array(quoteChars.length + 1).join('\\' + quote);
+    var quoteEscape = new RegExp('(^|[^\\\\])((?:\\\\{2})*)(' + quote + '+)', 'g');
+    content = content.replace(quoteEscape, function replaceQuotes (input, boundaryChar, leadingEscapedSlashes, quoteChars, match) {
+      return boundaryChar + leadingEscapedSlashes + repeat('\\' + quote, quoteChars.length);
     });
     token.value = quote + content + quote;
   }
